@@ -1,0 +1,168 @@
+name: E2E
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "22"
+
+jobs:
+  web:
+    name: Web (Chrome)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Seed .env
+        run: cp .env.example .env
+
+      - name: Run web suite
+        run: npm run test:web
+
+      - name: Upload allure-results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-web
+          path: report/allure-results
+          if-no-files-found: ignore
+
+      - name: Upload wdio logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wdio-logs-web
+          path: report/wdio
+          if-no-files-found: ignore
+
+  android:
+    name: Android (dockerised emulator + Appium)
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enable KVM access
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Seed .env
+        run: cp .env.example .env
+
+      - name: Fetch APK
+        run: npm run apk:fetch
+
+      - name: Boot emulator + Appium
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d --wait
+
+      - name: Run android suite
+        run: npm run test:android:docker
+
+      - name: Dump container logs
+        if: failure()
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml logs --no-color
+
+      - name: Tear down stack
+        if: always()
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml down -v
+
+      - name: Upload allure-results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-android
+          path: report/allure-results
+          if-no-files-found: ignore
+
+      - name: Upload wdio logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wdio-logs-android
+          path: report/wdio
+          if-no-files-found: ignore
+
+  mix:
+    name: Mix (Web + Android)
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enable KVM access
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Seed .env
+        run: cp .env.example .env
+
+      - name: Fetch APK
+        run: npm run apk:fetch
+
+      - name: Boot emulator + Appium
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d --wait
+
+      - name: Run mix suite
+        run: npm run test:mix:docker
+
+      - name: Dump container logs
+        if: failure()
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml logs --no-color
+
+      - name: Tear down stack
+        if: always()
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml down -v
+
+      - name: Upload allure-results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-mix
+          path: report/allure-results
+          if-no-files-found: ignore
+
+      - name: Upload wdio logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wdio-logs-mix
+          path: report/wdio
+          if-no-files-found: ignore

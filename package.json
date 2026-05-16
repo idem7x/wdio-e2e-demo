@@ -3,14 +3,20 @@
   "version": "1.0.0",
   "description": "Cross-platform E2E testing framework demo — WebdriverIO + Appium + Allure. Web, native Android, and mixed multi-browser orchestration.",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "type": "module",
   "scripts": {
     "clean": "rm -rf allure-report report",
     "test:web": "npm run clean && npx wdio run test/config/wdio.web.ts",
     "test:android": "npx wdio run test/config/wdio.android.ts",
+    "test:android:docker": "ANDROID_APK_DIR=/apk npx wdio run test/config/wdio.android.docker.ts",
     "test:mix": "npx wdio run test/config/wdio.mix.ts",
+    "test:mix:docker": "ANDROID_APK_DIR=/apk npx wdio run test/config/wdio.mix.ts",
+    "apk:fetch": "bash scripts/fetch-apk.sh",
+    "docker:up": "npm run apk:fetch && docker compose up -d && echo 'Waiting for Appium...' && until curl -fsS http://localhost:4723/status >/dev/null 2>&1; do sleep 3; done && echo 'Appium ready on :4723 — noVNC on http://localhost:6080'",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f android",
     "allure:open": "allure open allure-report",
     "lint": "eslint . --fix && prettier --check \"test/**/*.ts\" --write"
   },

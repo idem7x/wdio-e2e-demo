@@ -136,10 +136,16 @@ cp .env.example .env
 # Web (Chrome headless, no extra setup needed)
 npm run test:web
 
-# Android (requires the ApiDemos APK + Appium running)
+# Android — option A: local Appium + your own emulator/device
 curl -L -o test/resources/apk/ApiDemos-debug.apk \
   https://github.com/appium/appium/raw/master/packages/appium/sample-code/apps/ApiDemos-debug.apk
 npm run test:android
+
+# Android — option B: dockerised emulator + Appium (no local Android SDK needed)
+npm run docker:up           # boots emulator + Appium in one container
+npm run test:android:docker # runs the Android suite against it
+# watch the emulator: open http://localhost:6080
+npm run docker:down
 
 # Mixed (both browsers in the same process)
 npm run test:mix
@@ -149,6 +155,29 @@ npm run allure:open
 ```
 
 Required env vars are documented in [`.env.example`](.env.example).
+
+---
+
+## Dockerised Android stack
+
+`docker-compose.yml` brings up [`budtmo/docker-android`](https://github.com/budtmo/docker-android), which bundles an Android 11 emulator, ADB, and an Appium server in a single privileged container. The host APK directory is mounted read-only at `/apk`, so the in-container Appium installs the same APK the local suite uses.
+
+| Port | Purpose |
+|---|---|
+| 4723 | Appium server (matches `APPIUM_HOST=127.0.0.1`, `APPIUM_PORT=4723`) |
+| 6080 | noVNC viewer — open `http://localhost:6080` to watch the emulator |
+| 5554 / 5555 | ADB console / ADB |
+
+The `test:android:docker` script overrides `ANDROID_APK_DIR=/apk` so the path Appium receives in capabilities resolves inside the container. It also uses `wdio.android.docker.ts`, which strips the local `@wdio/appium-service` (otherwise wdio would try to spawn a second Appium on 4723).
+
+**Linux host:** add `/dev/kvm` to the `android` service for hardware acceleration:
+
+```yaml
+    devices:
+      - /dev/kvm
+```
+
+**macOS / Windows caveat:** Docker Desktop does not expose `/dev/kvm`, so the emulator falls back to software rendering and boots very slowly (often several minutes). For day-to-day local Android runs on a Mac, prefer a host-side AVD (`option A`). The docker stack is primarily intended for Linux CI runners.
 
 ---
 

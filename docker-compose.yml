@@ -1,0 +1,29 @@
+services:
+  android:
+    # All-in-one image: Android emulator + Appium server + noVNC viewer.
+    # Repo: https://github.com/budtmo/docker-android
+    image: budtmo/docker-android:emulator_11.0
+    container_name: wdio-android
+    privileged: true
+    ports:
+      - "4723:4723"   # Appium server
+      - "6080:6080"   # noVNC web UI — open http://localhost:6080 to watch the emulator
+      - "5554:5554"   # ADB console
+      - "5555:5555"   # ADB
+    environment:
+      EMULATOR_DEVICE: "Samsung Galaxy S10"
+      WEB_VNC: "true"
+      APPIUM: "true"
+      APPIUM_HOST: "0.0.0.0"
+      APPIUM_PORT: "4723"
+      MOBILE_WEB_TEST: "false"
+    volumes:
+      # APK is read by the in-container Appium at /apk/<file>.apk
+      # (override ANDROID_APK_DIR=/apk when running wdio against this stack).
+      - ./test/resources/apk:/apk:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:4723/status >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 90s

@@ -25,7 +25,9 @@ export default class Page {
   }
 
   public async isPageLoad(): Promise<boolean> {
-    await this.waitUntilTheHtmlIsLoad();
+    if (!browser.isMobile) {
+      await this.waitUntilTheHtmlIsLoad();
+    }
     await this.waitForElementIsDisplayed(this.pageElement);
     return true;
   }
@@ -89,6 +91,13 @@ export default class Page {
     timeout?: number
   ): Promise<true | void> {
     const ms = timeout ? timeout * 1000 : browser.options.waitforTimeout!;
+    if (browser.isMobile) {
+      // UiAutomator2 / XCUITest don't implement waitForClickable
+      // (it relies on a JS execute under the hood). "Displayed + enabled"
+      // is the native-app equivalent.
+      await this.waitForElementIsDisplayed(selector, timeout);
+      return await this.waitForElementIsEnabled(selector, timeout);
+    }
     return await selector.get().waitForClickable({
       timeout: ms,
       timeoutMsg: `Element [${selector.getSelector()}] is not clickable in time [${ms}] ms`

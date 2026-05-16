@@ -1,0 +1,7 @@
+.........Console Logs.........
+
+[2026-05-16 10:53:20] [INFO]: ************** Test started [[Android] Home menu loads with expected items] **************
+[2026-05-16 10:53:21] [INFO]: Home menu should be loaded, Actual [true], Expected [true]
+[2026-05-16 10:53:21] [INFO]: Check [Accessibility menu item] is displayed!
+[2026-05-16 10:53:21] [INFO]: Accessibility menu item should be visible, Actual [true], Expected [true]
+[2026-05-16 10:53:21] [INFO]: ************** Test finished [[Android] Home menu loads with expected items] **************

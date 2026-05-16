@@ -1,0 +1,6 @@
+.........Console Logs.........
+
+[2026-05-16 10:53:35] [INFO]: ************** Test started [[Android] Field operator sees Views submenu] **************
+[2026-05-16 10:53:35] [INFO]: Click on [Views menu item]
+[2026-05-16 10:53:38] [INFO]: Android Views submenu reachable, Actual [true], Expected [true]
+[2026-05-16 10:53:38] [INFO]: ************** Test finished [[Android] Field operator sees Views submenu] **************

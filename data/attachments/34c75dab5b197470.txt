@@ -1,0 +1,10 @@
+.........Console Logs.........
+
+[2026-05-16 10:53:30] [INFO]: ************** Test started [[Web] Admin can log into the web console] **************
+[2026-05-16 10:53:30] [INFO]: Open URL [https://www.saucedemo.com]
+[2026-05-16 10:53:31] [INFO]: Send text [standard_user] to input [Username input]
+[2026-05-16 10:53:32] [INFO]: Send text [secret_sauce] to input [Password input]
+[2026-05-16 10:53:32] [INFO]: Click on [Login button]
+[2026-05-16 10:53:34] [INFO]: The "inventory.html" page rendered fully.
+[2026-05-16 10:53:34] [INFO]: Web inventory page reachable after login, Actual [true], Expected [true]
+[2026-05-16 10:53:34] [INFO]: ************** Test finished [[Web] Admin can log into the web console] **************

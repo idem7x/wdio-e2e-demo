@@ -1,0 +1,11 @@
+.........Console Logs.........
+
+[2026-05-16 10:53:39] [INFO]: ************** Test started [[Web] Admin adds an item to cart (illustrative cross-platform handoff)] **************
+[2026-05-16 10:53:39] [INFO]: Open URL [https://www.saucedemo.com]
+[2026-05-16 10:53:39] [INFO]: Send text [standard_user] to input [Username input]
+[2026-05-16 10:53:39] [INFO]: Send text [secret_sauce] to input [Password input]
+[2026-05-16 10:53:39] [INFO]: Click on [Login button]
+[2026-05-16 10:53:40] [INFO]: Click on [Add to cart [sauce-labs-backpack]]
+[2026-05-16 10:53:40] [INFO]: Check [Cart badge] is existing!
+[2026-05-16 10:53:40] [INFO]: Cart badge should show 1 item, Actual [1], Expected [1]
+[2026-05-16 10:53:40] [INFO]: ************** Test finished [[Web] Admin adds an item to cart (illustrative cross-platform handoff)] **************

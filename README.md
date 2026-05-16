@@ -1,5 +1,8 @@
 # WebdriverIO E2E Demo — Web + Android + Mixed
 
+[![E2E](https://github.com/idem7x/wdio-e2e-demo/actions/workflows/e2e.yml/badge.svg?branch=main)](https://github.com/idem7x/wdio-e2e-demo/actions/workflows/e2e.yml)
+[![Allure report](https://img.shields.io/badge/Allure-report-FE6500?logo=allure&logoColor=white)](https://idem7x.github.io/wdio-e2e-demo/)
+
 A cross-platform end-to-end testing framework built with **TypeScript**, **WebdriverIO 9**, **Appium 3**, and **Mocha**. Demonstrates the patterns I use day-to-day on production E2E suites: a decorator-driven Page Object Model, reusable UI component wrappers, Allure step logging, BiDi-based browser monitoring, and a multi-browser harness that runs Chrome and Android in the same Mocha process.
 
 This repo is a sanitised, runnable distillation of the framework I architected for a multi-service production platform (medical dispatch — web console + ruggedised Android tablet app). Production-specific layers (database fixtures, Keycloak auth, feature-flag toggling, CI K8s orchestration) have been stripped; the architecture and the patterns are intact.

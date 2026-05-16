@@ -22,8 +22,9 @@ services:
       # (override ANDROID_APK_DIR=/apk when running wdio against this stack).
       - ./test/resources/apk:/apk:ro
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://localhost:4723/status >/dev/null || exit 1"]
+      # Tool-free TCP probe — works even if curl/wget aren't in the image.
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/4723' 2>/dev/null"]
       interval: 10s
       timeout: 5s
-      retries: 30
-      start_period: 90s
+      retries: 60
+      start_period: 240s

@@ -64,6 +64,7 @@ jobs:
             | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+          ls -la /dev/kvm || (echo "::warning::/dev/kvm missing — emulator will be software-rendered and slow"; true)
 
       - uses: actions/setup-node@v4
         with:
@@ -80,7 +81,28 @@ jobs:
         run: npm run apk:fetch
 
       - name: Boot emulator + Appium
-        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d --wait
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d
+
+      - name: Wait for Appium
+        run: |
+          set -e
+          echo "Polling http://localhost:4723/status (up to 12 min)..."
+          for i in $(seq 1 144); do
+            if curl -fsS http://localhost:4723/status >/dev/null 2>&1; then
+              echo "✓ Appium ready after $((i*5))s"
+              curl -s http://localhost:4723/status
+              exit 0
+            fi
+            if [ $((i % 12)) -eq 0 ]; then
+              echo "--- still waiting (${i}/144, $((i*5))s elapsed) ---"
+              docker compose -f docker-compose.yml -f docker-compose.ci.yml ps
+              docker compose -f docker-compose.yml -f docker-compose.ci.yml logs --tail=30 --no-color
+            fi
+            sleep 5
+          done
+          echo "✗ Appium did not become ready in 12 minutes"
+          docker compose -f docker-compose.yml -f docker-compose.ci.yml logs --no-color
+          exit 1
 
       - name: Run android suite
         run: npm run test:android:docker
@@ -122,6 +144,7 @@ jobs:
             | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+          ls -la /dev/kvm || (echo "::warning::/dev/kvm missing — emulator will be software-rendered and slow"; true)
 
       - uses: actions/setup-node@v4
         with:
@@ -138,7 +161,28 @@ jobs:
         run: npm run apk:fetch
 
       - name: Boot emulator + Appium
-        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d --wait
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d
+
+      - name: Wait for Appium
+        run: |
+          set -e
+          echo "Polling http://localhost:4723/status (up to 12 min)..."
+          for i in $(seq 1 144); do
+            if curl -fsS http://localhost:4723/status >/dev/null 2>&1; then
+              echo "✓ Appium ready after $((i*5))s"
+              curl -s http://localhost:4723/status
+              exit 0
+            fi
+            if [ $((i % 12)) -eq 0 ]; then
+              echo "--- still waiting (${i}/144, $((i*5))s elapsed) ---"
+              docker compose -f docker-compose.yml -f docker-compose.ci.yml ps
+              docker compose -f docker-compose.yml -f docker-compose.ci.yml logs --tail=30 --no-color
+            fi
+            sleep 5
+          done
+          echo "✗ Appium did not become ready in 12 minutes"
+          docker compose -f docker-compose.yml -f docker-compose.ci.yml logs --no-color
+          exit 1
 
       - name: Run mix suite
         run: npm run test:mix:docker

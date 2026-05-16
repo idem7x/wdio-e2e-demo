@@ -1,0 +1,13 @@
+.idea/
+.vscode/
+.DS_Store
+.env
+node_modules/
+build/
+tmp/
+temp/
+report/
+allure-report/
+allure-results/
+test/resources/apk/*.apk
+!test/resources/apk/.gitkeep

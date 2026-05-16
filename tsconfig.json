@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "sourceMap": true,
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "resolveJsonModule": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false,
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "strictPropertyInitialization": false,
+    "paths": {
+      "test/*": ["test/*"],
+      "config/*": ["test/config/*"],
+      "constants/*": ["test/constants/*"],
+      "data/*": ["test/data/*"],
+      "helpers/*": ["test/helpers/*"],
+      "modules/*": ["test/modules/*"],
+      "pageobjects/*": ["test/pageobjects/*"],
+      "specs/*": ["test/specs/*"],
+      "utils/*": ["test/utils/*"],
+      "types/*": ["types/*"]
+    },
+    "types": ["node", "@wdio/globals/types", "mocha", "webdriverio"]
+  },
+  "include": ["test/**/*.ts", "types/**/*.d.ts"],
+  "exclude": ["node_modules"]
+}

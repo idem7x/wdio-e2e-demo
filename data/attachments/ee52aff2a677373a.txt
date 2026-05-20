@@ -1,9 +1,0 @@
-.........Console Logs.........
-
-[2026-05-16 10:50:44] [INFO]: ************** Test started [Locked-out user sees error message on login] **************
-[2026-05-16 10:50:44] [INFO]: Open URL [https://www.saucedemo.com]
-[2026-05-16 10:50:44] [INFO]: Send text [locked_out_user] to input [Username input]
-[2026-05-16 10:50:44] [INFO]: Send text [secret_sauce] to input [Password input]
-[2026-05-16 10:50:44] [INFO]: Click on [Login button]
-[2026-05-16 10:50:44] [INFO]: Expected locked-out error, Actual [Epic sadface: Sorry, this user has been locked out.], to contain Expected [locked out]
-[2026-05-16 10:50:44] [INFO]: ************** Test finished [Locked-out user sees error message on login] **************
